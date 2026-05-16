@@ -22,3 +22,4 @@ models/
 # OS/editor
 .DS_Store
 .vscode/
+notebooks/hometasks/hometask_4-1_LoRA/data/tinyshakespeare.txt
