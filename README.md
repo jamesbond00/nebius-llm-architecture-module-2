@@ -26,6 +26,9 @@ inference concepts.
 - PyTorch implementation of a small transformer language model.
 - Embeddings, causal self-attention, multi-head attention, feed-forward blocks,
   residual connections, layer normalization, and language modelling loss.
+- Hand-written LoRA adapters for GPT-2, including low-rank parameterization,
+  adapter injection, frozen-base training, adapter save/load, and PEFT
+  comparison.
 - Local experimentation with Jupyter notebooks on CPU, CUDA, or Apple Silicon
   MPS.
 - Parameter-efficient fine-tuning concepts using Hugging Face Transformers,
@@ -39,9 +42,59 @@ inference concepts.
 - `notebooks/week*/`: weekly hands-on notebooks.
 - `notebooks/week05_06_transformers/practice/`: PEFT practice runbook and local helper code.
 - `notebooks/week05_06_transformers/hometask/`: tiny transformer language-model homework runbook.
+- `notebooks/hometasks/hometask_4-1_LoRA/`: LoRA-from-scratch GPT-2 homework,
+  completed Colab run, and beginner implementation guide.
 - `data/raw/`, `data/processed/`: local datasets/artifacts.
 - `tests/`: automated tests.
 - `docs/course_schedule.md`: course timeline and topics.
+
+## Completed Hometasks
+
+### LoRA from Scratch on GPT-2
+
+The LoRA hometask lives in:
+
+```text
+notebooks/hometasks/hometask_4-1_LoRA/
+```
+
+Main artifacts:
+
+- `README.md`: beginner-focused guide explaining LoRA, GPT-2 target modules,
+  implementation details, runtime strategy, and run logs.
+- `homework_lora.ipynb`: working notebook scaffold with implementation fixes.
+- `homework_lora_Alex_Colab_20260516.ipynb`: completed Colab submission
+  notebook with Q1-Q5 answers and visible outputs.
+
+The completed run implements a hand-written `LoRALinear`, injects LoRA into
+GPT-2's `c_attn` and `c_proj` projections, trains on TinyShakespeare, saves and
+reloads only the adapter weights, then compares against Hugging Face PEFT.
+
+Key results:
+
+```text
+Trainable LoRA params: 811,008 / 125.3M = 0.65%
+Adapter file size:    3.27 MB
+Adapter round-trip:   max abs diff 0.0
+```
+
+Hand-written LoRA PPL:
+
+```text
+Shakespeare-val PPL: 93.53 -> 41.68
+Control (P&P) PPL:  16.92 -> 18.51
+```
+
+PEFT comparison:
+
+```text
+metric                           hand-rolled      PEFT
+Shakespeare-val PPL                    41.68     41.41
+Control (P&P) PPL                      18.51     18.75
+```
+
+The hand-written implementation and PEFT both trained `811,008` parameters and
+reached similar Shakespeare validation perplexity.
 
 ## Environment Setup
 
