@@ -44,6 +44,9 @@ inference concepts.
 - `notebooks/week05_06_transformers/hometask/`: tiny transformer language-model homework runbook.
 - `notebooks/hometasks/hometask_4-1_LoRA/`: LoRA-from-scratch GPT-2 homework,
   completed Colab run, and beginner implementation guide.
+- `notebooks/hometasks/hometask_4-2_Build_MoE_Transformer/`: tiny MoE
+  Transformer homework with RoPE, top-2 expert routing, Colab T4 run, results,
+  and training charts.
 - `data/raw/`, `data/processed/`: local datasets/artifacts.
 - `tests/`: automated tests.
 - `docs/course_schedule.md`: course timeline and topics.
@@ -95,6 +98,60 @@ Control (P&P) PPL                      18.51     18.75
 
 The hand-written implementation and PEFT both trained `811,008` parameters and
 reached similar Shakespeare validation perplexity.
+
+### Build MoE Transformer
+
+The MoE Transformer hometask lives in:
+
+```text
+notebooks/hometasks/hometask_4-2_Build_MoE_Transformer/
+```
+
+Main artifacts:
+
+- `4_2_tiny_moe_lm_hometask_Alex_20260517.ipynb`: implemented homework
+  notebook.
+- `4_2_tiny_moe_lm_hometask_Alex_20260517_ColabT4run.ipynb`: completed Colab
+  T4 run with visible outputs.
+- `IMPLEMENTATION_PLAN.md`: beginner-focused implementation guide for RoPE,
+  RoPE attention, MoE routing, capacity, token dropping, and `TinyMoeLM`.
+- `RESULTS.md`: run summary with tests, metrics, perplexity, and interpretation.
+- `trainingcurve_tokendroprate.png`: training loss and token drop-rate chart.
+
+The completed run extends the tiny character-level Transformer with rotary
+position embeddings and a sparse Mixture-of-Experts feed-forward layer. Each MoE
+block uses 8 half-sized experts, top-2 routing, normalized router weights,
+capacity-limited expert dispatch, token dropping, and an averaged drop-rate
+metric.
+
+Verification:
+
+```text
+RoPE + MoE unit tests: OK
+Full-model sanity check: OK
+Model parameters: 5.36 M
+```
+
+Training results on Colab T4:
+
+```text
+Best val loss:    1.4989
+Final train loss: 1.2183
+Final val loss:   1.5016
+Final drop rate:  ~2%
+```
+
+Final perplexity evaluation:
+
+```text
+                         nll (nats)   perplexity      bpc
+Uniform baseline             4.1744        65.00     6.02
+Train (your model)           1.2225         3.40     1.76
+Val   (your model)           1.5027         4.49     2.17
+```
+
+The trained model is `14.5x` better than a uniform next-character guesser, and
+the MoE drop rate remains well below the `15%` homework threshold.
 
 ## Environment Setup
 
